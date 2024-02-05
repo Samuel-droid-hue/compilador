@@ -3,7 +3,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import Scrollbar
 import src.parser.coleccion_canonica as ccan
-import src.parser.primeros_siguientes as ps
+import parser.tienta_teste as ps
 
 def get_TAgrammar(path):
     with open(path, "r") as file:
