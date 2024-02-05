@@ -62,7 +62,7 @@ class Application:
         analizador= AnalizadorLexico()
         
         caracteres_separadores = analizador.caracteres
-        letra= string.ascii_letters + string.digits + '.' + "'" + "_" +'['+']'+'!'
+        letra= string.ascii_letters + string.digits + '.' + "'" + "_" +'['+']'+'!'+'\\'
         self.errores = analizador.encontrar_error(self.file,caracteres_separadores,letra)
         tira_tokens,self.total,palabras_id= analizador.tokenizar(self.file)
         self.conjunto_sin_duplicados = OrderedDict()
@@ -71,16 +71,24 @@ class Application:
             self.conjunto_sin_duplicados[elemento] = None  # Usamos el objeto None como marcador
             
         self.analyzed = True
+        with open("analizador.txt", 'w') as archivo:
         
-        for elem in self.total:
-            print(elem)
-        
-        print("errores=============================================")
-        for err in self.errores:
-            print(err)
-        print("id=============================================")
-        for con in self.conjunto_sin_duplicados:
-            print(con)
+            for elem in self.total:
+                print(elem)
+                archivo.writelines(elem + '\n')
+            
+            print("errores=============================================")
+            for err in self.errores:
+                print(err)
+                archivo.writelines(err+ '\n')
+            print("id=============================================")
+            for con in self.conjunto_sin_duplicados:
+                print(con)
+                
+            
+
+            
+            
         return tira_tokens, self.total
 class AnalizadorLexico:
     def __init__(self):
@@ -157,8 +165,11 @@ class AnalizadorLexico:
         total = []
         tira_token = ""
         in_comentario = False 
+        lineas_validas= []
         with open(codigo, 'r') as file:
             codigo = file.read()
+            
+        
         # Analiza el código para encontrar los lexemas y sus respectivos Tokens
         for m in re.finditer(tokens_unidos, codigo):
             token_tipo = m.lastgroup
@@ -196,6 +207,8 @@ class AnalizadorLexico:
                         tira_token += token_tipo + " "
                     if token_tipo == 'id':
                         simbolos.append((token_lexema,(0),(0)))
+                        
+
         return tira_token, total, simbolos 
 
     def encontrar_error(self, archivo_path, caracteres_separadores, letra):
