@@ -237,10 +237,19 @@ class ColeccionCanonica:
     # Changes position point into a set
     # Recive a list of lists of items
     def move_dot_together(self, element):
-        for i in range(len(element)):
+        i = 0
+        while i < len(element):
             element[i][-1] = self.move_dot(element[i][-1])
             if element[i][-1] == None:
                 element.pop(i)
+                i = 0
+            else:
+                i += 1
+
+        #for i in range(len(element)):
+            #element[i][-1] = self.move_dot(element[i][-1])
+            #if element[i][-1] == None:
+                #element.pop(i)
         
         return element
     # ---------------------------------------------------------
@@ -312,7 +321,9 @@ class ColeccionCanonica:
         while queue:
             p = queue[0][-1].index('.')
             # Si el punto no esta al final
-            if p < len(queue[0][-1]):
+            #######################################
+            # if p < len(queue[0][-1]):
+            if p < len(queue[0][-1])-1:
                 n = queue[0][-1][p+1]
                 # Si el elemento siguiente es no terminal y es igual que actual
                 # Solo apila no calcules
@@ -320,15 +331,21 @@ class ColeccionCanonica:
                     # Busca si el resultado existe o no 
                     if self.search_matches(result, queue[0]) is False:
                         result.append(queue.pop(0))
+                    else:
+                        queue.pop(0)
                 # Si el elemento siguiente es un terminal
                 elif n in self.terminals:
                     if self.search_matches(result, queue[0]) is False:
                         result.append(queue.pop(0))
+                    else:
+                        queue.pop(0)
                 # Si el elemento siguiente es diferente del actual y es no terminal
                 # Calcula de nuevo y apila
                 elif n != c and n in self.not_terminals:
                     if self.search_matches(result, queue[0]) is False:
                         result.append(queue.pop(0))
+                    else:
+                        queue.pop(0)
                     ###########################################################
                     # HERE IS THE ERROR!!!!
                     queue_aux = self.move_dot_together(self.search_productions(n))
@@ -344,8 +361,18 @@ class ColeccionCanonica:
                     aux[-1] = ['.']
                     if self.search_matches(result, aux) is False:
                         result.append(aux)
-
+            #######################################
+            # Si el punto esta al final
+            #######################################
+            else:
+                if self.search_matches(result, queue[0]) is False:
+                    result.append(queue.pop(0))
+                else:
+                    queue.pop(0)
             # Actualiza el simbolo actual
+            ##############################################
+            # En caso de que el elemento exista en la pila
+            ##############################################
             c = n
         return result
 
