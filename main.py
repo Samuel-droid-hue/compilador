@@ -4,6 +4,7 @@ import src.parser.coleccion_canonica as ccan
 import src.parser.primeros_siguientes as ps
 import src.parser.tabla_analisis as tas
 import src.lexer.analizador_lexico as a
+import src.parser.analizador_sintactico as asint
 
 class MiCompilador():
     def __init__(self):
@@ -57,7 +58,8 @@ class MiCompilador():
         self.execution.root.mainloop()
 
     def analizador_sintactico_lr(self):
-        print("AnalizadorSintacticoLR")
+        self.execution = asint.AnalizadorSintactico()
+        self.execution.root.mainloop()
 
     def analizador_semantico_lr(self):
         print("AnalizadorSemanticoLR")
