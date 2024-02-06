@@ -1,7 +1,6 @@
 import tkinter as tk
 import src.lexer.construccion_conjuntos as cc
 import src.parser.coleccion_canonica as ccan
-import parser.tienta_teste as ps
 import src.parser.tabla_analisis as tas
 import src.lexer.analizador_lexico as a
 import src.parser.analizador_sintactico as asint

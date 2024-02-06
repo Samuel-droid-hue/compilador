@@ -53,6 +53,7 @@ def obtener_Primeros(S,regla,noTerminales,terminales,bandera=0):
                         bandera=0  
     if a==0 and bandera==1:
         bandera=0
+        
     return bandera,primeros[0]  
 
 def obtener_siguientes(i,regla,noterminales,terminale,primeros,sig):
@@ -214,8 +215,8 @@ def primeros_siguientes(noterminales,terminale,regla):
     # "G T F ( L ) { Q }",
     # "J do { I } while ( B Z B Z B Z B ) ;",
     # "Q return O ;",]
+    bandera=0
     primeros={}
-    
     for i in noterminales:
         bandera,primeros[i]=obtener_Primeros(i,regla,noterminales,terminale)
     for i in noterminales:
@@ -223,7 +224,7 @@ def primeros_siguientes(noterminales,terminale,regla):
         primeros[i]=list(set(primeros[i]))
         primeros[i] = [i for i in primeros[i] if i != '']
         primeros[i]=' '.join(primeros[i])
-    print(primeros)
+    #print(primeros)
 
     siguiente={}
     siguiente["P"]="$"
@@ -239,8 +240,22 @@ def primeros_siguientes(noterminales,terminale,regla):
         siguiente[i]=list(set(siguiente[i]))
         siguiente[i] = [i for i in siguiente[i] if i != '']
         siguiente[i]=' '.join(siguiente[i])
-    print(siguiente)
+    #print(siguiente)
 
-path = filedialog.askopenfilename(filetype=[("Archivos de texto", "*.txt")])
-no_terminales, terminales, reglas = get_reglas(path)
-primeros_siguientes(no_terminales, terminales, reglas)
+    p=[]
+    S=[]
+    for i in noterminales:
+        p.append(primeros[i])
+        S.append(siguiente[i])
+    PS={}
+    PS["S"]=S
+    PS["P"]=p
+
+    return PS
+
+#path = filedialog.askopenfilename(filetype=[("Archivos de texto", "*.txt")])
+#no_terminales, terminales, reglas = get_reglas(path)
+#ps = primeros_siguientes(no_terminales, terminales, reglas)
+#print(ps['S'])
+#print("######################################################")
+#print(ps['P'])

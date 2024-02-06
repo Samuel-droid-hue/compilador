@@ -3,7 +3,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import Scrollbar
 import src.parser.coleccion_canonica as ccan
-import parser.tienta_teste as ps
+import src.parser.primeros_siguientes as ps
 
 def get_TAgrammar(path):
     with open(path, "r") as file:
@@ -243,13 +243,24 @@ class TablaTAS():
         self.isAnalyzed = False
     
     def tabla_analisis(self):
-        self.Reglas2 = self.gramaticaSinEspacios(self.Reglas)
+        #self.Reglas2 = self.gramaticaSinEspacios(self.Reglas)
+        # self.Reglas2 = for regla in self.Reglas: regla.replace(" ->", "")
+        for i in range(len(self.Reglas)):
+            self.Reglas2.append(self.Reglas[i].replace(" ->", ""))
         
-        self.PYS = ps.PrimerosYsiguientes(self.TE, self.NT, self.Reglas2)
+        sTE = ' '.join(self.TE)
+        sNT = ' '.join(self.NT)
+        sReglas = self.Reglas2[1:]
+
+        self.PYS = ps.primeros_siguientes(sNT, sTE, sReglas)
         self.siguientes = self.PYS['S']
         
-        self.ir_a_NT, self.ir_a_TE, self.states = ccan.coleccion_canonica(self.NT, self.TE, self.Reglas)
-        
+        # self.ir_a_NT, self.ir_a_TE, self.states = ccan.coleccion_canonica(self.NT, self.TE, self.Reglas)
+        canonica = ccan.coleccion_canonica()
+        canonica.file_path = self.file_path
+        canonica.open_rules()
+        self.ir_a_NT, self.ir_a_TE, self.states = canonica.get_canonica()
+
         self.tablaAS = tablaDeAnalisisSintactico(self.Reglas, self.states, self.ir_a_TE, self.ir_a_NT, self.siguientes, self.TE, self.NT)
         
         self.result,self.result2 = imprimirTabla(self.tablaAS, self.TE, self.NT)

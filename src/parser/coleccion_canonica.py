@@ -85,6 +85,21 @@ class ColeccionCanonica:
         else:
             messagebox.showerror("Coleccion Canonica", "No se ha seleccionado un archivo!")
 
+    def open_rules(self):
+        with open(self.file_path, 'r') as file:
+            content = file.read()
+        lines = content.splitlines()
+            
+        # Assignment terminals and not terminals symbols
+        self.not_terminals = lines[0].split(' ')
+        self.terminals = lines[1].split(' ')
+
+        # Assignment gramatical rules
+        for i in range(2, len(lines)):
+            rule = lines[i].split(' -> ')
+            rule[-1] = self.split_derivation(rule[-1])
+            self.gramatical_rules.append(rule)
+
     def clear_text(self):
         # Variables
         self.file_path = ""
@@ -174,7 +189,54 @@ class ColeccionCanonica:
         
         return format
     # ---------------------------------------------------------
+    def get_canonica(self):    
+        # -- Step 1
+        states = []
+        final = []
 
+        # Output
+        output_states = []
+        output_ir_a_NT = []
+        output_ir_a_TE = []
+
+        i0 = self.move_dot_together([self.gramatical_rules[0]])
+        states.append(self.full_lock(i0))
+        final.append(self.status_format(states[0]))
+
+        # Variable to state current and new
+        icurrent = 0
+        inew = 0
+
+        for s in states:
+            while s:
+                w, matches = self.search_after_point(s)
+
+                if isinstance(matches, list):
+                    matches = self.move_dot_together(matches)
+                    cerradura = self.full_lock(matches)
+                    if self.search_matches(final, self.status_format(cerradura)) is False and cerradura and w != '.':
+                        final.append(self.status_format(cerradura))
+                        states.append(cerradura)
+                        output_states.append(self.output_format(cerradura))
+                        inew += 1
+                        if w in self.terminals:
+                            output_ir_a_TE.append([icurrent, w, inew])
+                        elif w in self.not_terminals:
+                            output_ir_a_NT.append([icurrent, w, inew])
+                    elif self.search_matches(final, self.status_format(cerradura))is True:
+                        if w in self.terminals:
+                            output_ir_a_TE.append([icurrent, w, final.index(self.status_format(cerradura))])
+                        elif w in self.not_terminals:
+                            output_ir_a_NT.append([icurrent, w, final.index(self.status_format(cerradura))])
+                else:
+                    final.append(matches)
+                    if matches == "Aceptacion":
+                        output_ir_a_TE.append([icurrent, w, -1])
+
+            icurrent += 1
+        
+        return output_ir_a_NT, output_ir_a_TE, output_states
+    
     def conjunto_canonico(self):    
         output = ""
         
